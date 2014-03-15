@@ -2,6 +2,12 @@ use<frame.scad>
 include<arduino.scad>
 //Creates a bumper style enclosure that fits tightly around the edge of the PCB
 //derived from Arduino connectors library by Kelly Egan.
+
+// Designed from a sketch of i3 Omega frame. Generates an enclosed frame,
+// uncomment lines at the bottom to create STLs for top and bottom.  
+
+// Designed by Joseph Lenox
+
 module boardShape_wide( boardType = UNO, offset = 0, height = pcbHeight ) {
 	dimensions = boardDimensions(boardType);
 
@@ -76,8 +82,8 @@ module bumper_solid(boardType = UNO, mountingHoles = false, thick=0.2) {
 			cube([dimensions[0] -8,dimensions[1] * 0.4,bumperBaseHeight + 2]);
 	}
 }
-// translate([0,0,-3.1]) // Translation for top cutoff 
-translate([0,0,5]) // Translation for bottom cutoff 
+ translate([0,0,-3.1]) // Translation for top cutoff. Uncomment this and comment next line. 
+//translate([0,0,5]) // Translation for bottom cutoff. Uncomment this and comment previous line.
 difference() {
 	union() {
 		translate([-45,0,5.1]) rotate([0,0,270])  bumper_solid(boardtype=MEGA, thick=10);
@@ -86,8 +92,8 @@ difference() {
 	translate([-45, 3, -10]) cylinder(r=1.5, h=30);
 	translate([-45, -58, -10]) cylinder(r=1.5, h=30);
 	color("Blue") i3omegaframe(3.1);
-	color("Green") translate([-60,-70,2.9]) cube([500,500,10]); // bottom cutoff, .1mm shorter to add some tension.
-//	color("Green") translate([-60,-70,-6.9]) cube([500,500,10]); // top cutoff
+//	color("Green") translate([-60,-70,2.9]) cube([500,500,10]); // bottom cutoff, .1mm shorter to add some tension. uncomment this for slicing box for top
+	color("Green") translate([-60,-70,-6.9]) cube([500,500,10]); // top cutoff, uncomment this for bottom.
 }
 //color("Blue") i3omegaframe(3.1);
 
