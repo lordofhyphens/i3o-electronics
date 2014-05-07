@@ -8,7 +8,7 @@ include<arduino.scad>
 
 // Designed by Joseph Lenox
 
-module boardShape_wide( boardType = UNO, offset = 0, height = pcbHeight ) {
+module boardShape_wide( boardType = MEGA, offset = 0, height = pcbHeight ) {
 	dimensions = boardDimensions(boardType);
 
 	xScale = (dimensions[0] + offset * 8) / dimensions[0];
@@ -19,7 +19,7 @@ module boardShape_wide( boardType = UNO, offset = 0, height = pcbHeight ) {
 			linear_extrude(height = height) 
 				polygon(points = boardShapes[boardType]);
 }
-module bumper_solid(boardType = UNO, mountingHoles = false, thick=0.2) {
+module bumper_solid(boardType = MEGA, mountingHoles = false, thick=0.2) {
 	bumperBaseHeight = 2;
 	bumperHeight = bumperBaseHeight + pcbHeight + 0.5;
 	dimensions = boardDimensions(boardType);
@@ -42,10 +42,10 @@ module bumper_solid(boardType = UNO, mountingHoles = false, thick=0.2) {
 			difference() {
 				translate([0,0,-thick]) 
 					boardShape_wide(boardType = boardType, offset=2, height = bumperBaseHeight+thick);
-				color("Red") translate([4,18,-2]) cube([45.3,40,10]);
+				color("Red") translate([4,18,-2]) cube([45.3,60,10]);
 			}
 			//Board mounting holes
-			holePlacement(boardType=boardType)
+			holePlacement(boardType=boardType) 
 				cylinder(r = mountingHoleRadius + 1.5, h = bumperBaseHeight, $fn = 32);
 
 			//Bumper mounting holes (exterior)
@@ -73,8 +73,10 @@ module bumper_solid(boardType = UNO, mountingHoles = false, thick=0.2) {
 			}
 		}
 		translate([0,0,-0.5])
-		holePlacement(boardType=boardType)
-			cylinder(r = mountingHoleRadius, h = bumperHeight+thick, $fn = 32);	
+		holePlacement(boardType=boardType) translate([0,0,-2])
+			cylinder(r = mountingHoleRadius, h = bumperHeight+thick+2, $fn = 32);	
+		color("purple") holePlacement(boardType=boardType) translate([0,0,-2.1])
+			cylinder(r = 4.5, h = 3, $fn = 32);	
 		translate([0, 0, bumperBaseHeight]) {
 			components(boardType = boardType, component = ALL, offset = 1);
 		}
@@ -82,18 +84,26 @@ module bumper_solid(boardType = UNO, mountingHoles = false, thick=0.2) {
 			cube([dimensions[0] -8,dimensions[1] * 0.4,bumperBaseHeight + 2]);
 	}
 }
- translate([0,0,-3.1]) // Translation for top cutoff. Uncomment this and comment next line. 
-//translate([0,0,5]) // Translation for bottom cutoff. Uncomment this and comment previous line.
+//translate([0,0,-3.1]) // Translation for top cutoff. Uncomment this and comment next line. 
+translate([0,0,5]) // Translation for bottom cutoff. Uncomment this and comment previous line.
+rotate([0,0,180]) {
 difference() {
 	union() {
-		translate([-45,0,5.1]) rotate([0,0,270])  bumper_solid(boardtype=MEGA, thick=10);
+		translate([-45,0,5.1]) rotate([0,0,270])  bumper_solid(boardType=MEGA, thick=10);
+		translate([0,-4,0]) {
+		color("blue")translate([15,-70,3.1]) cube([36,13,4]);
+		difference() {
+			color("blue")translate([15,-70,3.1]) cube([36,13,5]);
+			color("blue")translate([15.25,-69.9,3.1]) cube([35.5,12.8,5]);
+		}
+		}
 	}
-	translate([25, 3, -10]) cylinder(r=1.5, h=30);
-	translate([-45, 3, -10]) cylinder(r=1.5, h=30);
-	translate([-45, -58, -10]) cylinder(r=1.5, h=30);
-	color("Blue") i3omegaframe(3.1);
-//	color("Green") translate([-60,-70,2.9]) cube([500,500,10]); // bottom cutoff, .1mm shorter to add some tension. uncomment this for slicing box for top
-	color("Green") translate([-60,-70,-6.9]) cube([500,500,10]); // top cutoff, uncomment this for bottom.
+	translate([50, 3, -10]) cylinder(r=1.5, h=30, $fn=30);
+	translate([-45, 3, -10]) cylinder(r=1.5, h=30, $fn=30);
+	translate([-45, -58, -10]) cylinder(r=1.5, h=30, $fn=30);
+	translate([-2,0,0]) color("Blue") i3omegaframe(3.1);
+	color("Green") translate([-60,-80,2.9]) cube([500,500,20]); // bottom cutoff, .1mm shorter to add some tension. uncomment this for slicing box for top
+	//color("Green") translate([-60,-70,-6.9]) cube([500,500,10]); // top cutoff, uncomment this for bottom.
 }
 //color("Blue") i3omegaframe(3.1);
-
+}
